@@ -1,5 +1,6 @@
 import { Menu, Bell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import boboImg from '../../assets/bobo.jpg';
 
 export function Header() {
   return (
@@ -7,11 +8,11 @@ export function Header() {
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="https://images.unsplash.com/photo-1645106281521-86da01d1031d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwb2xpdGljaWFuJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcyNTc1NDI2fDA&ixlib=rb-4.1.0&q=80&w=1080" />
-            <AvatarFallback>MP</AvatarFallback>
+            <AvatarImage src={boboImg} />
+            <AvatarFallback>BT</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-sm font-semibold text-foreground">Marcelo Pereira</h1>
+            <h1 className="text-sm font-semibold text-foreground">Bobô Tavares</h1>
             <p className="text-xs text-muted-foreground">Deputado Estadual</p>
           </div>
         </div>

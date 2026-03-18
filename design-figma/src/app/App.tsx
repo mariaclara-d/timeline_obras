@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { Header } from './components/Header';
 import { FilterBar } from './components/FilterBar';
@@ -7,7 +7,7 @@ import { GalleryView } from './components/GalleryView';
 import { CarouselView } from './components/CarouselView';
 import { BottomNav } from './components/BottomNav';
 import { ProjectDetail } from './components/ProjectDetail';
-import { mockProjects, categories, cities, years } from './data/mock-projects';
+import { useProjects } from './hooks/useProjects';
 import { ViewMode, Project } from './types/project';
 
 export default function App() {
@@ -18,16 +18,11 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
-  // Filter projects based on selected filters
-  const filteredProjects = useMemo(() => {
-    return mockProjects.filter((project) => {
-      const matchesCategory = selectedCategory === 'Todas' || project.category === selectedCategory;
-      const matchesCity = selectedCity === 'Todas' || project.city === selectedCity;
-      const matchesYear = selectedYear === null || project.year === selectedYear;
-      
-      return matchesCategory && matchesCity && matchesYear;
-    });
-  }, [selectedCategory, selectedCity, selectedYear]);
+  const { projects: filteredProjects, allProjects, filterOptions } = useProjects({
+    category: selectedCategory,
+    city: selectedCity,
+    year: selectedYear,
+  });
 
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);
@@ -56,9 +51,9 @@ export default function App() {
           selectedCategory={selectedCategory}
           selectedCity={selectedCity}
           selectedYear={selectedYear}
-          categories={categories}
-          cities={cities}
-          years={years}
+          categories={filterOptions.categories}
+          cities={filterOptions.cities}
+          years={filterOptions.years}
           onCategoryChange={setSelectedCategory}
           onCityChange={setSelectedCity}
           onYearChange={setSelectedYear}
@@ -66,7 +61,7 @@ export default function App() {
 
         {/* Stats Bar */}
         <StatsBar
-          totalProjects={mockProjects.length}
+          totalProjects={allProjects.length}
           filteredCount={filteredProjects.length}
         />
 

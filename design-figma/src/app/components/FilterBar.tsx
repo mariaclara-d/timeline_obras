@@ -1,12 +1,4 @@
 import { ChevronDown } from 'lucide-react';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
 
 interface FilterBarProps {
   selectedCategory: string;
@@ -20,6 +12,40 @@ interface FilterBarProps {
   onYearChange: (year: number | null) => void;
 }
 
+function FilterSelect({
+  value,
+  options,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  options: string[];
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  const active = value !== options[0];
+  return (
+    <div className="relative shrink-0">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`appearance-none pl-3 pr-7 py-1.5 text-sm rounded-full border cursor-pointer outline-none transition-colors ${
+          active
+            ? 'bg-primary text-primary-foreground border-primary'
+            : 'bg-background text-foreground border-border hover:border-primary'
+        }`}
+      >
+        {options.map((o) => (
+          <option key={o} value={o}>{o}</option>
+        ))}
+      </select>
+      <ChevronDown className={`absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 pointer-events-none ${
+        active ? 'text-primary-foreground' : 'text-muted-foreground'
+      }`} />
+    </div>
+  );
+}
+
 export function FilterBar({
   selectedCategory,
   selectedCity,
@@ -31,100 +57,40 @@ export function FilterBar({
   onCityChange,
   onYearChange,
 }: FilterBarProps) {
-  const activeFiltersCount = 
+  const activeFiltersCount =
     (selectedCategory !== 'Todas' ? 1 : 0) +
     (selectedCity !== 'Todas' ? 1 : 0) +
     (selectedYear !== null ? 1 : 0);
+
+  const yearOptions = ['Todos', ...years.map(String)];
+  const yearValue = selectedYear !== null ? String(selectedYear) : 'Todos';
 
   return (
     <div className="sticky top-[57px] z-40 bg-background border-b border-border">
       <div className="px-4 py-3">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {/* Category Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant={selectedCategory !== 'Todas' ? 'default' : 'outline'} 
-                size="sm"
-                className="shrink-0 rounded-full"
-              >
-                {selectedCategory}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              {categories.map((category) => (
-                <DropdownMenuItem
-                  key={category}
-                  onClick={() => onCategoryChange(category)}
-                  className="cursor-pointer"
-                >
-                  {category}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* City Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant={selectedCity !== 'Todas' ? 'default' : 'outline'} 
-                size="sm"
-                className="shrink-0 rounded-full"
-              >
-                {selectedCity}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              {cities.map((city) => (
-                <DropdownMenuItem
-                  key={city}
-                  onClick={() => onCityChange(city)}
-                  className="cursor-pointer"
-                >
-                  {city}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Year Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant={selectedYear !== null ? 'default' : 'outline'} 
-                size="sm"
-                className="shrink-0 rounded-full"
-              >
-                {selectedYear || 'Ano'}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-32">
-              <DropdownMenuItem
-                onClick={() => onYearChange(null)}
-                className="cursor-pointer"
-              >
-                Todos
-              </DropdownMenuItem>
-              {years.map((year) => (
-                <DropdownMenuItem
-                  key={year}
-                  onClick={() => onYearChange(year)}
-                  className="cursor-pointer"
-                >
-                  {year}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          <FilterSelect
+            value={selectedCategory}
+            options={categories}
+            onChange={onCategoryChange}
+            placeholder="Categoria"
+          />
+          <FilterSelect
+            value={selectedCity}
+            options={cities}
+            onChange={onCityChange}
+            placeholder="Cidade"
+          />
+          <FilterSelect
+            value={yearValue}
+            options={yearOptions}
+            onChange={(v) => onYearChange(v === 'Todos' ? null : Number(v))}
+            placeholder="Ano"
+          />
           {activeFiltersCount > 0 && (
-            <Badge variant="secondary" className="shrink-0 rounded-full">
+            <span className="shrink-0 text-xs bg-secondary text-secondary-foreground px-2.5 py-1 rounded-full">
               {activeFiltersCount} {activeFiltersCount === 1 ? 'filtro' : 'filtros'}
-            </Badge>
+            </span>
           )}
         </div>
       </div>
